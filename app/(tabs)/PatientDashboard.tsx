@@ -76,6 +76,11 @@ export default function PatientDashboard() {
         <TouchableOpacity style={styles.navItem} onPress={() => router.push('/billing')}>
           <Text style={styles.navText}>💳 Billing</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/medicalRecord')}>
+          <Text style={styles.navText}>👤 Medical Record</Text>
+        </TouchableOpacity>
+
       </View>
 
       <ScrollView style={styles.page} contentContainerStyle={styles.content}>
