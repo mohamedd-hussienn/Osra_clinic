@@ -1,5 +1,5 @@
-// app/(tabs)/patient-dashboard.tsx
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   Dimensions,
@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 
-// Replace with your asset path
+
 const logo = require('@/assets/images/logo_osra.png');
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -42,8 +42,10 @@ const INVOICES: Invoice[] = [
 ];
 
 export default function PatientDashboard() {
+  const router = useRouter(); // for navigation
+
   return (
-    <ScrollView style={styles.page} contentContainerStyle={styles.content}>
+    <View style={{ flex: 1, backgroundColor: BG }}>
       {/* Header */}
       <View style={styles.headerRow}>
         <View style={styles.brand}>
@@ -57,85 +59,106 @@ export default function PatientDashboard() {
         </View>
       </View>
 
-      <Text style={styles.welcomeTitle}>Welcome back, Jane Doe!</Text>
-      <Text style={styles.subText}>Here's a summary of your account.</Text>
+      {/* ----- Top Navigation ----- */}
+      <View style={styles.topNav}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/profile')}>
+          <Text style={styles.navText}>👤 Profile</Text>
+        </TouchableOpacity>
 
-      {/* Cards row */}
-      <View style={styles.cardsRow}>
-        <Card style={{ flex: 1 }}>
-          <Text style={styles.cardTitle}>Upcoming Appointments</Text>
-          <FlatList
-            data={APPOINTMENTS}
-            keyExtractor={(i) => i.id}
-            renderItem={({ item }) => <AppointmentRow item={item} />}
-            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-            scrollEnabled={false}
-          />
-          <TouchableOpacity style={styles.linkRow}>
-            <Text style={styles.linkText}>See All Appointments</Text>
-          </TouchableOpacity>
-        </Card>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/book-appointment')}>
+          <Text style={styles.navText}>📅 Book</Text>
+        </TouchableOpacity>
 
-        <Card style={{ flex: 1 }}>
-          <Text style={styles.cardTitle}>Latest Medical Records</Text>
-          <FlatList
-            data={RECORDS}
-            keyExtractor={(i) => i.id}
-            renderItem={({ item }) => <RecordRow item={item} />}
-            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-            scrollEnabled={false}
-          />
-          <TouchableOpacity style={styles.linkRow}>
-            <Text style={styles.linkText}>See All Medical Records</Text>
-          </TouchableOpacity>
-        </Card>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/my-appointment')}>
+          <Text style={styles.navText}>📝 My Appointments</Text>
+        </TouchableOpacity>
 
-        <Card style={{ flex: 1 }}>
-          <Text style={styles.cardTitle}>Unpaid Invoices</Text>
-          <FlatList
-            data={INVOICES}
-            keyExtractor={(i) => i.id}
-            renderItem={({ item }) => <InvoiceRow item={item} />}
-            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-            scrollEnabled={false}
-          />
-          <TouchableOpacity style={styles.linkRow}>
-            <Text style={styles.linkText}>See All Invoices</Text>
-          </TouchableOpacity>
-        </Card>
-      </View>
-
-      {/* Optional "Up Next" panel similar to your example */}
-      <View style={styles.upNextRow}>
-        <View style={styles.upNextCard}>
-          <Text style={styles.upNextTitle}>Up Next</Text>
-          <View style={styles.upNextContent}>
-            <View style={styles.avatarBox}>
-              <Text style={styles.avatarText}>JD</Text>
-            </View>
-            <View style={{ flex: 1, paddingLeft: 12 }}>
-              <Text style={styles.upNextName}>John Doe</Text>
-              <Text style={styles.upNextSub}>9:00 AM · Annual Checkup</Text>
-              <Text style={styles.noteTitle}>Notes</Text>
-              <Text style={styles.noteBody}>
-                Patient reported sensitivity in upper right molar. Last X-rays were 12 months ago.
-              </Text>
-
-              <View style={styles.upNextButtons}>
-                <TouchableOpacity style={styles.primaryBtn}><Text style={styles.primaryBtnText}>Start Appointment</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.ghostBtn}><Text style={styles.ghostBtnText}>View Patient Chart</Text></TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.calendarBtn}>
-          <Text style={styles.calendarBtnText}>Go to Full Calendar →</Text>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/billing')}>
+          <Text style={styles.navText}>💳 Billing</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={{ height: 40 }} />
-    </ScrollView>
+      <ScrollView style={styles.page} contentContainerStyle={styles.content}>
+        <Text style={styles.welcomeTitle}>Welcome back, Jane Doe!</Text>
+        <Text style={styles.subText}>Here's a summary of your account.</Text>
+
+        {/* Cards row */}
+        <View style={styles.cardsRow}>
+          <Card style={{ flex: 1 }}>
+            <Text style={styles.cardTitle}>Upcoming Appointments</Text>
+            <FlatList
+              data={APPOINTMENTS}
+              keyExtractor={(i) => i.id}
+              renderItem={({ item }) => <AppointmentRow item={item} />}
+              ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+              scrollEnabled={false}
+            />
+            <TouchableOpacity style={styles.linkRow}>
+              <Text style={styles.linkText}>See All Appointments</Text>
+            </TouchableOpacity>
+          </Card>
+
+          <Card style={{ flex: 1 }}>
+            <Text style={styles.cardTitle}>Latest Medical Records</Text>
+            <FlatList
+              data={RECORDS}
+              keyExtractor={(i) => i.id}
+              renderItem={({ item }) => <RecordRow item={item} />}
+              ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+              scrollEnabled={false}
+            />
+            <TouchableOpacity style={styles.linkRow}>
+              <Text style={styles.linkText}>See All Medical Records</Text>
+            </TouchableOpacity>
+          </Card>
+
+          <Card style={{ flex: 1 }}>
+            <Text style={styles.cardTitle}>Unpaid Invoices</Text>
+            <FlatList
+              data={INVOICES}
+              keyExtractor={(i) => i.id}
+              renderItem={({ item }) => <InvoiceRow item={item} />}
+              ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+              scrollEnabled={false}
+            />
+            <TouchableOpacity style={styles.linkRow}>
+              <Text style={styles.linkText}>See All Invoices</Text>
+            </TouchableOpacity>
+          </Card>
+        </View>
+
+        {/* Optional "Up Next" panel */}
+        <View style={styles.upNextRow}>
+          <View style={styles.upNextCard}>
+            <Text style={styles.upNextTitle}>Up Next</Text>
+            <View style={styles.upNextContent}>
+              <View style={styles.avatarBox}>
+                <Text style={styles.avatarText}>JD</Text>
+              </View>
+              <View style={{ flex: 1, paddingLeft: 12 }}>
+                <Text style={styles.upNextName}>John Doe</Text>
+                <Text style={styles.upNextSub}>9:00 AM · Annual Checkup</Text>
+                <Text style={styles.noteTitle}>Notes</Text>
+                <Text style={styles.noteBody}>
+                  Patient reported sensitivity in upper right molar. Last X-rays were 12 months ago.
+                </Text>
+
+                <View style={styles.upNextButtons}>
+                  <TouchableOpacity style={styles.primaryBtn}><Text style={styles.primaryBtnText}>Start Appointment</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.ghostBtn}><Text style={styles.ghostBtnText}>View Patient Chart</Text></TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.calendarBtn}>
+            <Text style={styles.calendarBtnText}>Go to Full Calendar →</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ height: 40 }} /> {/* Space for scroll */}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -211,14 +234,18 @@ const CARD_SHADOW = {
 };
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: BG },
+  page: { flex: 1 },
   content: { paddingVertical: 26, paddingHorizontal: 18 },
 
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 18,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    backgroundColor: BG,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
   brand: { flexDirection: 'row', alignItems: 'center' },
   logo: { width: 44, height: 44, marginRight: 10 },
@@ -235,7 +262,19 @@ const styles = StyleSheet.create({
   },
   iconBtnText: { fontSize: 18 },
 
-  welcomeTitle: { fontSize: 28, fontWeight: '800', color: '#0f172a', marginTop: 6 },
+  topNav: {
+    height: 60,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  navItem: { alignItems: 'center', justifyContent: 'center' },
+  navText: { color: '#374151', fontWeight: '700' },
+
+  welcomeTitle: { fontSize: 28, fontWeight: '800', color: '#0f172a', marginTop: 12 },
   subText: { color: MUTED, marginTop: 6, marginBottom: 18 },
 
   cardsRow: {
@@ -250,7 +289,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     ...CARD_SHADOW,
     minWidth: 260,
-    marginRight: 0,
   },
   cardTitle: { fontSize: 16, fontWeight: '700', marginBottom: 12, color: '#0f172a' },
 
@@ -370,3 +408,6 @@ const styles = StyleSheet.create({
   },
   calendarBtnText: { color: '#374151', fontWeight: '700' },
 });
+
+export { CARD_BG, CARD_SHADOW, MUTED, PRIMARY };
+
