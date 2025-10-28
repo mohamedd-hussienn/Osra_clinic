@@ -68,7 +68,25 @@ export default function LoginScreen() {
           </Link>
         </ThemedText>
 
+        <ThemedText style={styles.footerText}>
+          go to the dashboard {' '}
+          <Link href="/DoctorDashboard">
+            <ThemedText type="link" style={styles.signupLink}>
+              Doctor Dashboard
+            </ThemedText>
+          </Link>
+        </ThemedText>
 
+        <ThemedText style={styles.footerText}>
+          go to the dashboard {' '}
+          <Link href="/AdminDashboard">
+            <ThemedText type="link" style={styles.signupLink}>
+              Admin Dashboard
+            </ThemedText>
+          </Link>
+        </ThemedText>
+
+        
         
       </View>
     </ThemedView>
