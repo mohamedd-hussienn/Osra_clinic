@@ -238,7 +238,7 @@ const CARD_SHADOW = {
   elevation: 3,
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   page: { flex: 1 },
   content: { paddingVertical: 26, paddingHorizontal: 18 },
 
