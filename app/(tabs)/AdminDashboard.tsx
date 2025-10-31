@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   logo: { width: 40, height: 40, marginBottom: 6 },
   brandText: { fontSize: 18, fontWeight: '800', color: '#0f172a' },
 
-  navSection: { gap: 15, paddingHorizontal: 10 },
+  navSection: { gap: 10, paddingHorizontal: 10 },
   navItem: {
     flexDirection: 'row',
     alignItems: 'center',
