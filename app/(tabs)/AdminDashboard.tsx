@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       <View style={styles.sidebar}>
         <View style={styles.logoSection}>
           <Image source={require('@/assets/images/logo_osra.png')} style={styles.logo} />
-          <Text style={styles.brandText}>DentalCare</Text>
+          <Text style={styles.brandText}>Osra Clinic</Text>
         </View>
 
         <View style={styles.navSection}>
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   logo: { width: 40, height: 40, marginBottom: 6 },
   brandText: { fontSize: 18, fontWeight: '800', color: '#0f172a' },
 
-  navSection: { gap: 6, paddingHorizontal: 10 },
+  navSection: { gap: 15, paddingHorizontal: 10 },
   navItem: {
     flexDirection: 'row',
     alignItems: 'center',

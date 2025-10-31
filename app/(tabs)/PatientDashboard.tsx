@@ -11,9 +11,7 @@ import {
   View,
 } from 'react-native';
 
-
 const logo = require('@/assets/images/logo_osra.png');
-
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
 type Appointment = {
@@ -42,47 +40,37 @@ const INVOICES: Invoice[] = [
 ];
 
 export default function PatientDashboard() {
-  const router = useRouter(); // for navigation
+  const router = useRouter();
+
+  const navItems = [
+    { label: 'Profile', icon: '👤', route: '/profile' },
+    { label: 'Book', icon: '📅', route: '/book-appointment' },
+    { label: 'My Appointments', icon: '📝', route: '/my-appointment' },
+    { label: 'Billing', icon: '💳', route: '/billing' },
+    { label: 'Medical Record', icon: '🩺', route: '/medicalRecord' },
+  ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: BG }}>
-      {/* Header */}
-      <View style={styles.headerRow}>
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: BG }}>
+      {/* ----- Side Navbar ----- */}
+      <View style={styles.sideNav}>
         <View style={styles.brand}>
           <Image source={logo} style={styles.logo} />
           <Text style={styles.brandText}>Osra Clinic</Text>
         </View>
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.iconBtn}>
-            <Text style={styles.iconBtnText}>🔔</Text>
+        {navItems.map((item) => (
+          <TouchableOpacity
+            key={item.route}
+            style={styles.sideNavItem}
+            onPress={() => router.push(item.route)}
+          >
+            <Text style={styles.sideNavIcon}>{item.icon}</Text>
+            <Text style={styles.sideNavText}>{item.label}</Text>
           </TouchableOpacity>
-        </View>
+        ))}
       </View>
 
-      {/* ----- Top Navigation ----- */}
-      <View style={styles.topNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/profile')}>
-          <Text style={styles.navText}>👤 Profile</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/book-appointment')}>
-          <Text style={styles.navText}>📅 Book</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/my-appointment')}>
-          <Text style={styles.navText}>📝 My Appointments</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/billing')}>
-          <Text style={styles.navText}>💳 Billing</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push('/medicalRecord')}>
-          <Text style={styles.navText}>👤 Medical Record</Text>
-        </TouchableOpacity>
-
-      </View>
-
+      {/* ----- Main Content ----- */}
       <ScrollView style={styles.page} contentContainerStyle={styles.content}>
         <Text style={styles.welcomeTitle}>Welcome back, Jane Doe!</Text>
         <Text style={styles.subText}>Here's a summary of your account.</Text>
@@ -168,7 +156,6 @@ export default function PatientDashboard() {
 }
 
 /* ----- Mini components ----- */
-
 function Card({ children, style }: { children: React.ReactNode; style?: any }) {
   return <View style={[styles.card, style]}>{children}</View>;
 }
@@ -225,8 +212,7 @@ function InvoiceRow({ item }: { item: Invoice }) {
 }
 
 /* ----- Styles ----- */
-
-const PRIMARY = '#0EA5E9'; // blue accent
+const PRIMARY = '#0EA5E9';
 const CARD_BG = '#FFFFFF';
 const BG = '#F8FAFC';
 const MUTED = '#6B7280';
@@ -238,46 +224,32 @@ const CARD_SHADOW = {
   elevation: 3,
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   page: { flex: 1 },
   content: { paddingVertical: 26, paddingHorizontal: 18 },
 
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    backgroundColor: BG,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+  /* ----- Side Navbar ----- */
+  sideNav: {
+    width: 180,
+    backgroundColor: '#fff',
+    paddingTop: 20,
+    paddingHorizontal: 12,
+    borderRightWidth: 1,
+    borderRightColor: '#E5E7EB',
   },
-  brand: { flexDirection: 'row', alignItems: 'center' },
-  logo: { width: 44, height: 44, marginRight: 10 },
+  sideNavItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    marginTop: 10,
+  },
+  sideNavIcon: { fontSize: 20, marginRight: 10 },
+  sideNavText: { fontWeight: '700', color: '#374151', fontSize: 15 },
+  brand: { flexDirection: 'row', alignItems: 'center', marginBottom: 24 },
+  logo: { width: 40, height: 40, marginRight: 10 },
   brandText: { fontSize: 16, fontWeight: '700', color: '#111827' },
-  headerRight: { flexDirection: 'row', alignItems: 'center' },
-  iconBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...CARD_SHADOW,
-  },
-  iconBtnText: { fontSize: 18 },
-
-  topNav: {
-    height: 60,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  navItem: { alignItems: 'center', justifyContent: 'center' },
-  navText: { color: '#374151', fontWeight: '700' },
 
   welcomeTitle: { fontSize: 28, fontWeight: '800', color: '#0f172a', marginTop: 12 },
   subText: { color: MUTED, marginTop: 6, marginBottom: 18 },
@@ -327,56 +299,23 @@ export const styles = StyleSheet.create({
   rowTitle: { fontSize: 15, fontWeight: '700', color: '#0f172a' },
   rowSub: { fontSize: 13, color: MUTED, marginTop: 3 },
 
-  detailBtn: {
-    backgroundColor: '#E6F4FF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    marginLeft: 12,
-  },
+  detailBtn: { backgroundColor: '#E6F4FF', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, marginLeft: 12 },
   detailBtnText: { color: PRIMARY, fontWeight: '700' },
 
-  viewBtn: {
-    backgroundColor: '#ECFFF6',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    marginLeft: 12,
-  },
+  viewBtn: { backgroundColor: '#ECFFF6', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, marginLeft: 12 },
   viewBtnText: { color: '#10B981', fontWeight: '700' },
 
-  payBtn: {
-    backgroundColor: '#FFEDD5',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-    marginLeft: 12,
-  },
+  payBtn: { backgroundColor: '#FFEDD5', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, marginLeft: 12 },
   payBtnText: { color: '#F59E0B', fontWeight: '700' },
 
   linkRow: { marginTop: 16, alignItems: 'flex-start' },
   linkText: { color: PRIMARY, fontWeight: '600' },
 
-  upNextRow: {
-    marginTop: 10,
-    flexDirection: 'column',
-  },
-  upNextCard: {
-    backgroundColor: CARD_BG,
-    borderRadius: 12,
-    padding: 16,
-    ...CARD_SHADOW,
-  },
+  upNextRow: { marginTop: 10, flexDirection: 'column' },
+  upNextCard: { backgroundColor: CARD_BG, borderRadius: 12, padding: 16, ...CARD_SHADOW },
   upNextTitle: { fontSize: 16, fontWeight: '800', marginBottom: 12 },
   upNextContent: { flexDirection: 'row' },
-  avatarBox: {
-    width: 84,
-    height: 84,
-    borderRadius: 12,
-    backgroundColor: '#F1F5F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  avatarBox: { width: 84, height: 84, borderRadius: 12, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontWeight: '800', color: '#0f172a', fontSize: 20 },
 
   upNextName: { fontSize: 16, fontWeight: '700' },
@@ -386,33 +325,13 @@ export const styles = StyleSheet.create({
   noteBody: { color: MUTED, marginTop: 6, lineHeight: 18 },
 
   upNextButtons: { flexDirection: 'row', marginTop: 12, gap: 12 },
-  primaryBtn: {
-    backgroundColor: PRIMARY,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
+  primaryBtn: { backgroundColor: PRIMARY, paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10, alignItems: 'center' },
   primaryBtnText: { color: '#fff', fontWeight: '700' },
-  ghostBtn: {
-    backgroundColor: '#F3F4F6',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    marginLeft: 10,
-  },
+  ghostBtn: { backgroundColor: '#F3F4F6', paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10, marginLeft: 10 },
   ghostBtnText: { color: '#374151', fontWeight: '700' },
 
-  calendarBtn: {
-    marginTop: 12,
-    backgroundColor: '#F3F4F6',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
+  calendarBtn: { marginTop: 12, backgroundColor: '#F3F4F6', paddingVertical: 12, paddingHorizontal: 14, borderRadius: 12, alignItems: 'center' },
   calendarBtnText: { color: '#374151', fontWeight: '700' },
 });
 
 export { CARD_BG, CARD_SHADOW, MUTED, PRIMARY };
-
