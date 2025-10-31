@@ -6,12 +6,12 @@ type Invoice = {
   id: string;
   appointmentDate: string;
   total: string;
-  status: 'Paid' | 'Pending';
+  status: 'Paid' | 'UnPaid';
 };
 
 const INVOICES: Invoice[] = [
   { id: 'INV-001', appointmentDate: 'Oct 15, 2023', total: '$150.00', status: 'Paid' },
-  { id: 'INV-002', appointmentDate: 'Oct 22, 2023', total: '$275.00', status: 'Pending' },
+  { id: 'INV-002', appointmentDate: 'Oct 22, 2023', total: '$275.00', status: 'Paid' },
   { id: 'INV-003', appointmentDate: 'Nov 01, 2023', total: '$320.00', status: 'Paid' },
 ];
 
