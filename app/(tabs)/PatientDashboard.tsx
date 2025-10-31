@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import React from 'react';
 import {
   Dimensions,
@@ -106,7 +106,7 @@ export default function PatientDashboard() {
             </TouchableOpacity>
           </Card>
 
-          <Card style={{ flex: 1 }}>
+          {/* <Card style={{ flex: 1 }}>
             <Text style={styles.cardTitle}>Unpaid Invoices</Text>
             <FlatList
               data={INVOICES}
@@ -118,7 +118,8 @@ export default function PatientDashboard() {
             <TouchableOpacity style={styles.linkRow}>
               <Text style={styles.linkText}>See All Invoices</Text>
             </TouchableOpacity>
-          </Card>
+          </Card> */}
+
         </View>
 
         {/* Optional "Up Next" panel */}
@@ -145,9 +146,10 @@ export default function PatientDashboard() {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.calendarBtn}>
+          {/* <TouchableOpacity style={styles.calendarBtn}>
             <Text style={styles.calendarBtnText}>Go to Full Calendar →</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
         </View>
 
         <View style={{ height: 40 }} /> {/* Space for scroll */}
@@ -171,7 +173,10 @@ function AppointmentRow({ item }: { item: Appointment }) {
           <Text style={styles.rowSub}>{item.doctor} · {item.datetime}</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.detailBtn}>
+      <TouchableOpacity
+        style={styles.detailBtn}
+        onPress={() => router.push('/my-appointment')}
+      >
         <Text style={styles.detailBtnText}>Details</Text>
       </TouchableOpacity>
     </View>
