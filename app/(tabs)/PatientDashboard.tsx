@@ -48,6 +48,7 @@ export default function PatientDashboard() {
     { label: 'My Appointments', icon: '📝', route: '/my-appointment' },
     { label: 'Billing', icon: '💳', route: '/billing' },
     { label: 'Medical Record', icon: '🩺', route: '/medicalRecord' },
+    { label: 'Logout', icon: '🚪', route: '/login' },
   ];
 
   return (
@@ -335,3 +336,4 @@ const styles = StyleSheet.create({
 });
 
 export { CARD_BG, CARD_SHADOW, MUTED, PRIMARY };
+
