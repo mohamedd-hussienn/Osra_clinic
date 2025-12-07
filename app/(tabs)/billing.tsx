@@ -47,7 +47,7 @@ function InvoiceRow({ item }: { item: Invoice }) {
       <Text style={styles.rowSub}>Total: {item.total}</Text>
 
       <TouchableOpacity style={styles.downloadBtn}>
-        <Text style={styles.downloadBtnText}>Download Invoice</Text>
+        <Text style={styles.downloadBtnText}>Print Invoice</Text>
       </TouchableOpacity>
     </View>
   );

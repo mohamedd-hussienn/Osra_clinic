@@ -16,12 +16,12 @@ export default function Profile() {
       </View>
 
       {/* Medical Info Card */}
-      <View style={[styles.card, CARD_SHADOW]}>
+      {/* <View style={[styles.card, CARD_SHADOW]}>
         <Text style={styles.cardTitle}>Medical Info</Text>
         <TextInput style={styles.input} placeholder="Medical History" defaultValue="None" />
         <TextInput style={styles.input} placeholder="Allergies" defaultValue="Peanuts" />
         <TextInput style={styles.input} placeholder="Current Medications" defaultValue="Vitamin D" />
-      </View>
+      </View> */}
 
       {/* Password Update */}
       <View style={[styles.card, CARD_SHADOW]}>
