@@ -5,9 +5,9 @@ import { CARD_BG, CARD_SHADOW, PRIMARY } from './PatientDashboard';
 
 const INITIAL_INVOICES = [
   { id: 1, invoiceId: 'INV-001', patient: 'John Doe', date: '2025-10-10', amount: '$200', status: 'Paid' },
-  { id: 2, invoiceId: 'INV-002', patient: 'Jane Smith', date: '2025-10-15', amount: '$350', status: 'Pending' },
+  { id: 2, invoiceId: 'INV-002', patient: 'Jane Smith', date: '2025-10-15', amount: '$350', status: 'Paid' },
   { id: 3, invoiceId: 'INV-003', patient: 'Adam Brown', date: '2025-10-20', amount: '$180', status: 'Paid' },
-  { id: 4, invoiceId: 'INV-004', patient: 'Mary Lee', date: '2025-10-25', amount: '$220', status: 'Pending' },
+  { id: 4, invoiceId: 'INV-004', patient: 'Mary Lee', date: '2025-10-25', amount: '$220', status: 'Paid' },
 ];
 
 export default function InvoicesAndPayments() {
