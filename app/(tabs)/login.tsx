@@ -2,12 +2,57 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Animations
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const riseAnim = useRef(new Animated.Value(40)).current;
+  const logoFloat = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(riseAnim, {
+        toValue: 0,
+        duration: 600,
+        easing: Easing.out(Easing.back(1.3)),
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Floating logo loop
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoFloat, {
+          toValue: -6,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(logoFloat, {
+          toValue: 0,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
 
   const handleLogin = () => {
     alert(`Email: ${email}\nPassword: ${password}`);
@@ -15,23 +60,34 @@ export default function LoginScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.card}>
-        <Image
-          source={require('@/assets/images/logo_osra.png')} // 🦷 Dental logo
-          style={styles.logo}
-        />
+      {/* Soft background glow */}
+      <View style={styles.glowTop} />
+      <View style={styles.glowBottom} />
+
+      <Animated.View
+        style={[
+          styles.card,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: riseAnim }],
+          },
+        ]}
+      >
+        <Animated.View style={{ transform: [{ translateY: logoFloat }] }}>
+          <Image
+            source={require('@/assets/images/logo_osra.png')}
+            style={styles.logo}
+          />
+        </Animated.View>
 
         <ThemedText type="title" style={styles.title}>
-          Welcome Back 
+          Welcome Back
         </ThemedText>
-        
-        
-        
 
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor="#94a3b8"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -40,55 +96,57 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder="Password"
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor="#94a3b8"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.loginButton}
+          onPress={handleLogin}
+        >
           <ThemedText style={styles.loginButtonText}>Login</ThemedText>
         </TouchableOpacity>
 
+        {/* Links – kept EXACTLY the same */}
         <ThemedText style={styles.footerText}>
           Don’t have an account?{' '}
           <Link href="/signup">
-            <ThemedText type="link" style={styles.signupLink}>
+            <ThemedText type="link" style={styles.link}>
               Sign Up
             </ThemedText>
           </Link>
         </ThemedText>
 
         <ThemedText style={styles.footerText}>
-          go to the dashboard {' '}
+          go to the dashboard{' '}
           <Link href="/PatientDashboard">
-            <ThemedText type="link" style={styles.signupLink}>
+            <ThemedText type="link" style={styles.link}>
               Patient Dashboard
             </ThemedText>
           </Link>
         </ThemedText>
 
         <ThemedText style={styles.footerText}>
-          go to the dashboard {' '}
+          go to the dashboard{' '}
           <Link href="/DoctorDashboard">
-            <ThemedText type="link" style={styles.signupLink}>
+            <ThemedText type="link" style={styles.link}>
               Doctor Dashboard
             </ThemedText>
           </Link>
         </ThemedText>
 
         <ThemedText style={styles.footerText}>
-          go to the dashboard {' '}
+          go to the dashboard{' '}
           <Link href="/AdminDashboard">
-            <ThemedText type="link" style={styles.signupLink}>
+            <ThemedText type="link" style={styles.link}>
               Admin Dashboard
             </ThemedText>
           </Link>
         </ThemedText>
-
-        
-        
-      </View>
+      </Animated.View>
     </ThemedView>
   );
 }
@@ -96,71 +154,111 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#f9fbff',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
   },
+
+  // Decorative glows
+  glowTop: {
+    position: 'absolute',
+    top: -120,
+    right: -100,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: '#bfdbfe',
+    opacity: 0.35,
+  },
+  glowBottom: {
+    position: 'absolute',
+    bottom: -100,
+    left: -80,
+    width: 260,
+    height: 260,
+    borderRadius: 140,
+    backgroundColor: '#93c5fd',
+    opacity: 0.25,
+  },
+
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    paddingVertical: 40,
-    paddingHorizontal: 25,
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 420,
+    backgroundColor: '#ffffffee',
+    borderRadius: 28,
+    padding: 36,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+
+    shadowColor: '#2563eb',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 25,
+
+    elevation: 6,
   },
+
   logo: {
-    width: 80,
-    height: 80,
-    marginBottom: 20,
+    width: 90,
+    height: 90,
+    marginBottom: 12,
   },
+
   title: {
-    fontSize: 26,
+    marginBottom: 24,
+    fontSize: 27,
     fontWeight: '700',
-    color: '#3b82f6',
-    marginBottom: 20,
+    color: '#1e40af',
   },
-  subtitle: {
-    color: '#6b7280',
-    fontSize: 14,
-    marginBottom: 30,
-  },
+
   input: {
     width: '100%',
+    height: 52,
+    borderRadius: 50,
+    paddingHorizontal: 20,
+
     backgroundColor: '#f1f5f9',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
-    fontSize: 16,
-    color: '#111827',
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#e2e8f0',
+
+    marginBottom: 16,
+    fontSize: 15,
+    color: '#0f172a',
   },
+
   loginButton: {
-    backgroundColor: '#3b82f6',
-    borderRadius: 10,
-    paddingVertical: 14,
     width: '100%',
+    height: 54,
+    borderRadius: 50,
+    marginTop: 14,
+
+    backgroundColor: '#2563eb',
     alignItems: 'center',
-    marginTop: 10,
+    justifyContent: 'center',
+
+    shadowColor: '#2563eb',
+    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 15,
+
+    elevation: 6,
   },
+
   loginButtonText: {
-    color: '#fff',
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 17,
+    letterSpacing: 0.5,
+    color: '#ffffff',
   },
+
   footerText: {
-    marginTop: 20,
+    marginTop: 18,
     fontSize: 14,
-    color: '#6b7280',
+    color: '#64748b',
   },
-  signupLink: {
-    color: '#3b82f6',
+
+  link: {
+    color: '#2563eb',
     fontWeight: '600',
   },
 });

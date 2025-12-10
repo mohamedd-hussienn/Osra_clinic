@@ -9,9 +9,9 @@ function BackButton() {
 
   const onPress = () => {
     if (router.canGoBack()) {
-      router.back(); // go back in history
+      router.back();
     } else {
-      router.push('/login'); // fallback to home if no history
+      router.push('/login');
     }
   };
 
@@ -27,25 +27,23 @@ export default function Layout() {
     <Stack
       screenOptions={{
         headerShown: true,
-        headerStyle: { backgroundColor: '#fff' }, // white background
-        headerTitleStyle: { fontWeight: '700', color: '#000' }, // black title text
-        headerTintColor: '#000', // black icons/text
+        headerStyle: { backgroundColor: '#fff' },
+        headerTitle: '', // hides title globally
+        headerTintColor: '#000', // arrow color
       }}
     >
-      {/* Home page: hide back button */}
+      {/* Home page: no back arrow */}
       <Stack.Screen
         name="index"
         options={{
-          title: 'Home',
           headerLeft: () => null,
         }}
       />
 
-      {/* Example other pages */}
+      {/* Other pages: arrow only */}
       <Stack.Screen
         name="explore"
         options={{
-          title: 'Explore',
           headerLeft: () => <BackButton />,
         }}
       />
@@ -53,7 +51,6 @@ export default function Layout() {
       <Stack.Screen
         name="details"
         options={{
-          title: 'Details',
           headerLeft: () => <BackButton />,
         }}
       />

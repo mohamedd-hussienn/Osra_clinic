@@ -1,8 +1,17 @@
 import Checkbox from 'expo-checkbox';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Animated,
+  Easing,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function SignupScreen() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -11,10 +20,47 @@ export default function SignupScreen() {
     lastName: '',
     phone: '',
     email: '',
+    password: '',   // ✅ ADDED
     address: '',
     dateOfBirth: '',
     gender: '',
   });
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const riseAnim = useRef(new Animated.Value(40)).current;
+  const logoFloat = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(riseAnim, {
+        toValue: 0,
+        duration: 600,
+        easing: Easing.out(Easing.back(1.3)),
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(logoFloat, {
+          toValue: -6,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(logoFloat, {
+          toValue: 0,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData({ ...formData, [field]: value });
@@ -25,111 +71,160 @@ export default function SignupScreen() {
       alert('Please select your role');
       return;
     }
+
     console.log('Signup Data:', { role: selectedRole, ...formData });
     alert(`${selectedRole} registered successfully!`);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Logo */}
-      <Image source={require('@/assets/images/logo_osra.png')} style={styles.logo} />
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Background glow */}
+      <View style={styles.glowTop} />
+      <View style={styles.glowBottom} />
 
-      <Text style={styles.title}>Create an Account</Text>
-
-      {/* Role Selection */}
-      <View style={styles.checkboxContainer}>
-        <View style={styles.checkboxRow}>
-          <Checkbox
-            value={selectedRole === 'Patient'}
-            onValueChange={() => setSelectedRole('Patient')}
-            color={selectedRole === 'Patient' ? '#007AFF' : undefined}
+      <Animated.View
+        style={[
+          styles.card,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: riseAnim }],
+          },
+        ]}
+      >
+        {/* Logo */}
+        <Animated.View style={{ transform: [{ translateY: logoFloat }] }}>
+          <Image
+            source={require('@/assets/images/logo_osra.png')}
+            style={styles.logo}
           />
-          <Text style={styles.checkboxLabel}>Patient</Text>
+        </Animated.View>
+
+        <Text style={styles.title}>Create an Account</Text>
+
+        {/* Role Selection */}
+        <View style={styles.checkboxContainer}>
+          {['Patient', 'Doctor', 'Admin'].map((role) => (
+            <View key={role} style={styles.checkboxRow}>
+              <Checkbox
+                value={selectedRole === role}
+                onValueChange={() => setSelectedRole(role)}
+                color={selectedRole === role ? '#2563eb' : undefined}
+              />
+              <Text style={styles.checkboxLabel}>{role}</Text>
+            </View>
+          ))}
         </View>
 
-        <View style={styles.checkboxRow}>
-          <Checkbox
-            value={selectedRole === 'Doctor'}
-            onValueChange={() => setSelectedRole('Doctor')}
-            color={selectedRole === 'Doctor' ? '#007AFF' : undefined}
-          />
-          <Text style={styles.checkboxLabel}>Doctor</Text>
-        </View>
+        {/* Common Fields */}
+        <TextInput
+          style={styles.input}
+          placeholder="First Name"
+          placeholderTextColor="#94a3b8"
+          value={formData.firstName}
+          onChangeText={(text) =>
+            handleInputChange('firstName', text)
+          }
+        />
 
-        <View style={styles.checkboxRow}>
-          <Checkbox
-            value={selectedRole === 'Admin'}
-            onValueChange={() => setSelectedRole('Admin')}
-            color={selectedRole === 'Admin' ? '#007AFF' : undefined}
-          />
-          <Text style={styles.checkboxLabel}>Admin</Text>
-        </View>
-      </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Last Name"
+          placeholderTextColor="#94a3b8"
+          value={formData.lastName}
+          onChangeText={(text) =>
+            handleInputChange('lastName', text)
+          }
+        />
 
-      {/* Common Fields */}
-      <TextInput
-        style={styles.input}
-        placeholder="First Name"
-        value={formData.firstName}
-        onChangeText={(text) => handleInputChange('firstName', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Last Name"
-        value={formData.lastName}
-        onChangeText={(text) => handleInputChange('lastName', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone"
-        keyboardType="phone-pad"
-        value={formData.phone}
-        onChangeText={(text) => handleInputChange('phone', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        value={formData.email}
-        onChangeText={(text) => handleInputChange('email', text)}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Phone"
+          placeholderTextColor="#94a3b8"
+          keyboardType="phone-pad"
+          value={formData.phone}
+          onChangeText={(text) =>
+            handleInputChange('phone', text)
+          }
+        />
 
-      {/* Role-Specific Fields */}
-      {selectedRole === 'Patient' && (
-        <>
-          <TextInput
-            style={styles.input}
-            placeholder="Address"
-            value={formData.address}
-            onChangeText={(text) => handleInputChange('address', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Date of Birth"
-            value={formData.dateOfBirth}
-            onChangeText={(text) => handleInputChange('dateOfBirth', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Gender"
-            value={formData.gender}
-            onChangeText={(text) => handleInputChange('gender', text)}
-          />
-        </>
-      )}
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#94a3b8"
+          keyboardType="email-address"
+          value={formData.email}
+          onChangeText={(text) =>
+            handleInputChange('email', text)
+          }
+        />
 
-      {/* Signup Button */}
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
+        {/* ✅ PASSWORD FIELD (ADDED) */}
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#94a3b8"
+          secureTextEntry
+          value={formData.password}
+          onChangeText={(text) =>
+            handleInputChange('password', text)
+          }
+        />
 
-      {/* Already have an account */}
-      <Text style={styles.loginText}>
-        Already have an account?{' '}
-        <Link href="/login" style={styles.loginLink}>
-          Login
-        </Link>
-      </Text>
+        {/* Role-Specific Fields */}
+        {selectedRole === 'Patient' && (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="Address"
+              placeholderTextColor="#94a3b8"
+              value={formData.address}
+              onChangeText={(text) =>
+                handleInputChange('address', text)
+              }
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Date of Birth"
+              placeholderTextColor="#94a3b8"
+              value={formData.dateOfBirth}
+              onChangeText={(text) =>
+                handleInputChange('dateOfBirth', text)
+              }
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Gender"
+              placeholderTextColor="#94a3b8"
+              value={formData.gender}
+              onChangeText={(text) =>
+                handleInputChange('gender', text)
+              }
+            />
+          </>
+        )}
+
+        {/* Signup Button */}
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.85}
+          onPress={handleSignup}
+        >
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
+
+        {/* Login link */}
+        <Text style={styles.loginText}>
+          Already have an account?{' '}
+          <Link href="/login" style={styles.loginLink}>
+            Login
+          </Link>
+        </Text>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -137,70 +232,122 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
+    backgroundColor: '#f9fbff',
     alignItems: 'center',
-    backgroundColor: '#F7F9FC',
+    justifyContent: 'center',
     padding: 20,
   },
-  logo: {
-    width: 130,
-    height: 130,
-    marginBottom: 20,
+
+  glowTop: {
+    position: 'absolute',
+    top: -120,
+    right: -100,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: '#bfdbfe',
+    opacity: 0.35,
   },
+  glowBottom: {
+    position: 'absolute',
+    bottom: -100,
+    left: -80,
+    width: 260,
+    height: 260,
+    borderRadius: 140,
+    backgroundColor: '#93c5fd',
+    opacity: 0.25,
+  },
+
+  card: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: '#ffffffee',
+    borderRadius: 28,
+    padding: 30,
+    alignItems: 'center',
+
+    shadowColor: '#2563eb',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 25,
+    elevation: 6,
+  },
+
+  logo: {
+    width: 90,
+    height: 90,
+    marginBottom: 8,
+  },
+
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#007AFF',
-    marginBottom: 20,
+    color: '#1e40af',
+    marginBottom: 18,
   },
+
   checkboxContainer: {
     flexDirection: 'row',
     marginBottom: 20,
-    gap: 15,
+    gap: 18,
   },
+
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
   },
+
   checkboxLabel: {
-    marginLeft: 6,
-    fontSize: 16,
-    color: '#333',
-  },
-  input: {
-    width: '90%',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 12,
-    marginVertical: 8,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 12,
-    width: '90%',
-    paddingVertical: 14,
-    marginTop: 15,
-    alignItems: 'center',
-    shadowColor: '#007AFF',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  loginText: {
-    marginTop: 20,
     fontSize: 15,
-    color: '#333',
+    color: '#1f2933',
   },
+
+  input: {
+    width: '100%',
+    height: 52,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 50,
+    paddingHorizontal: 20,
+    borderColor: '#e2e8f0',
+    borderWidth: 1,
+    fontSize: 15,
+    color: '#0f172a',
+    marginBottom: 14,
+  },
+
+  button: {
+    width: '100%',
+    height: 54,
+    borderRadius: 50,
+    marginTop: 16,
+    backgroundColor: '#2563eb',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    shadowColor: '#2563eb',
+    shadowOpacity: 0.4,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 6,
+  },
+
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+
+  loginText: {
+    marginTop: 18,
+    color: '#64748b',
+    fontSize: 14,
+  },
+
   loginLink: {
-    color: '#007affff',
+    color: '#2563eb',
     fontWeight: '600',
   },
 });
