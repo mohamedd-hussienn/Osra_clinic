@@ -1,4 +1,3 @@
-import Checkbox from 'expo-checkbox';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -13,17 +12,20 @@ import {
   View,
 } from 'react-native';
 
+import { Picker } from '@react-native-picker/picker'; // Dropdown
+
 export default function SignupScreen() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [gender, setGender] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     phone: '',
     email: '',
-    password: '',   // ✅ ADDED
+    password: '',
     address: '',
     dateOfBirth: '',
-    gender: '',
   });
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -66,13 +68,21 @@ export default function SignupScreen() {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSignup = () => {
-    if (!selectedRole) {
-      alert('Please select your role');
-      return;
-    }
+  // Format DOB
+  const formatDOB = (text: string) => {
+    let cleaned = text.replace(/[^\d]/g, '');
+    let formatted = '';
 
-    console.log('Signup Data:', { role: selectedRole, ...formData });
+    if (cleaned.length >= 2) formatted = cleaned.slice(0, 2) + '/';
+    if (cleaned.length >= 4) formatted += cleaned.slice(2, 4) + '/';
+    if (cleaned.length >= 5) formatted += cleaned.slice(4, 8);
+
+    return formatted;
+  };
+
+  const handleSignup = () => {
+    if (!selectedRole) return alert('Please select your role');
+
     alert(`${selectedRole} registered successfully!`);
   };
 
@@ -81,52 +91,40 @@ export default function SignupScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {/* Background glow */}
       <View style={styles.glowTop} />
       <View style={styles.glowBottom} />
 
       <Animated.View
-        style={[
-          styles.card,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: riseAnim }],
-          },
-        ]}
+        style={[styles.card, { opacity: fadeAnim, transform: [{ translateY: riseAnim }] }]}
       >
-        {/* Logo */}
         <Animated.View style={{ transform: [{ translateY: logoFloat }] }}>
-          <Image
-            source={require('@/assets/images/logo_osra.png')}
-            style={styles.logo}
-          />
+          <Image source={require('@/assets/images/logo_osra.png')} style={styles.logo} />
         </Animated.View>
 
         <Text style={styles.title}>Create an Account</Text>
 
-        {/* Role Selection */}
-        <View style={styles.checkboxContainer}>
-          {['Patient', 'Doctor', 'Admin'].map((role) => (
-            <View key={role} style={styles.checkboxRow}>
-              <Checkbox
-                value={selectedRole === role}
-                onValueChange={() => setSelectedRole(role)}
-                color={selectedRole === role ? '#2563eb' : undefined}
-              />
-              <Text style={styles.checkboxLabel}>{role}</Text>
-            </View>
-          ))}
+        {/* ROLE DROPDOWN */}
+        <View style={styles.dropdownWrapper}>
+          <Picker
+            selectedValue={selectedRole}
+            onValueChange={(value) => setSelectedRole(value)}
+            style={styles.dropdown}
+            dropdownIconColor="#2563eb"
+            itemStyle={{ color: '#0f172a', fontSize: 15 }}
+          >
+            <Picker.Item label="Select Role" value={null} color="#64748b" />
+            <Picker.Item label="Patient" value="Patient" color="#0f172a" />
+            <Picker.Item label="Doctor" value="Doctor" color="#0f172a" />
+          </Picker>
         </View>
 
-        {/* Common Fields */}
+        {/* COMMON FIELDS */}
         <TextInput
           style={styles.input}
           placeholder="First Name"
           placeholderTextColor="#94a3b8"
           value={formData.firstName}
-          onChangeText={(text) =>
-            handleInputChange('firstName', text)
-          }
+          onChangeText={(t) => handleInputChange('firstName', t)}
         />
 
         <TextInput
@@ -134,9 +132,7 @@ export default function SignupScreen() {
           placeholder="Last Name"
           placeholderTextColor="#94a3b8"
           value={formData.lastName}
-          onChangeText={(text) =>
-            handleInputChange('lastName', text)
-          }
+          onChangeText={(t) => handleInputChange('lastName', t)}
         />
 
         <TextInput
@@ -145,9 +141,7 @@ export default function SignupScreen() {
           placeholderTextColor="#94a3b8"
           keyboardType="phone-pad"
           value={formData.phone}
-          onChangeText={(text) =>
-            handleInputChange('phone', text)
-          }
+          onChangeText={(t) => handleInputChange('phone', t)}
         />
 
         <TextInput
@@ -156,24 +150,19 @@ export default function SignupScreen() {
           placeholderTextColor="#94a3b8"
           keyboardType="email-address"
           value={formData.email}
-          onChangeText={(text) =>
-            handleInputChange('email', text)
-          }
+          onChangeText={(t) => handleInputChange('email', t)}
         />
 
-        {/* ✅ PASSWORD FIELD (ADDED) */}
         <TextInput
           style={styles.input}
           placeholder="Password"
           placeholderTextColor="#94a3b8"
           secureTextEntry
           value={formData.password}
-          onChangeText={(text) =>
-            handleInputChange('password', text)
-          }
+          onChangeText={(t) => handleInputChange('password', t)}
         />
 
-        {/* Role-Specific Fields */}
+        {/* PATIENT FIELDS */}
         {selectedRole === 'Patient' && (
           <>
             <TextInput
@@ -181,43 +170,45 @@ export default function SignupScreen() {
               placeholder="Address"
               placeholderTextColor="#94a3b8"
               value={formData.address}
-              onChangeText={(text) =>
-                handleInputChange('address', text)
-              }
+              onChangeText={(t) => handleInputChange('address', t)}
             />
 
             <TextInput
               style={styles.input}
-              placeholder="Date of Birth"
+              placeholder="Date of Birth (DD/MM/YYYY)"
               placeholderTextColor="#94a3b8"
+              keyboardType="numeric"
+              maxLength={10}
               value={formData.dateOfBirth}
               onChangeText={(text) =>
-                handleInputChange('dateOfBirth', text)
+                handleInputChange('dateOfBirth', formatDOB(text))
               }
             />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Gender"
-              placeholderTextColor="#94a3b8"
-              value={formData.gender}
-              onChangeText={(text) =>
-                handleInputChange('gender', text)
-              }
-            />
+            {/* GENDER DROPDOWN */}
+            <View style={styles.dropdownWrapper}>
+              <Picker
+                selectedValue={gender}
+                onValueChange={(value) => setGender(value)}
+                style={styles.dropdown}
+                dropdownIconColor="#2563eb"
+                itemStyle={{ color: '#0f172a', fontSize: 15 }}
+              >
+                <Picker.Item label="Select Gender" value={null} color="#64748b" />
+                <Picker.Item label="Male" value="Male" color="#0f172a" />
+                <Picker.Item label="Female" value="Female" color="#0f172a" />
+              </Picker>
+            </View>
           </>
         )}
 
-        {/* Signup Button */}
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.85}
-          onPress={handleSignup}
-        >
+        {/* DOCTOR FIELDS */}
+        {selectedRole === 'Doctor' && <></>}
+
+        <TouchableOpacity style={styles.button} onPress={handleSignup} activeOpacity={0.85}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
 
-        {/* Login link */}
         <Text style={styles.loginText}>
           Already have an account?{' '}
           <Link href="/login" style={styles.loginLink}>
@@ -248,6 +239,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#bfdbfe',
     opacity: 0.35,
   },
+
   glowBottom: {
     position: 'absolute',
     bottom: -100,
@@ -266,11 +258,6 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     padding: 30,
     alignItems: 'center',
-
-    shadowColor: '#2563eb',
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 25,
     elevation: 6,
   },
 
@@ -283,25 +270,27 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#1e40af',
+    color: '#1742cfff',
     marginBottom: 18,
   },
+  
 
-  checkboxContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    gap: 18,
+  dropdownWrapper: {
+    width: '100%',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 14,
+    overflow: 'hidden',
+    justifyContent: 'center',
   },
 
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-
-  checkboxLabel: {
+  dropdown: {
+    height: 52,
+    paddingLeft: 20,
+    color: '#0f172a',
     fontSize: 15,
-    color: '#1f2933',
   },
 
   input: {
@@ -325,19 +314,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#2563eb',
     alignItems: 'center',
     justifyContent: 'center',
-
-    shadowColor: '#2563eb',
-    shadowOpacity: 0.4,
-    shadowRadius: 15,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 6,
   },
 
   buttonText: {
     color: '#ffffff',
     fontSize: 17,
     fontWeight: '700',
-    letterSpacing: 0.5,
   },
 
   loginText: {
