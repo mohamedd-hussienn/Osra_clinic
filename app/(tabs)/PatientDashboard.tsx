@@ -64,12 +64,12 @@ export default function PatientDashboard() {
 
   // navigation items (unchanged labels/routes/icons)
   const navItems = [
-    { label: 'Profile', icon: '👤', route: '/profile' },
-    { label: 'Book', icon: '📅', route: '/book-appointment' },
-    { label: 'My Appointments', icon: '📝', route: '/my-appointment' },
-    { label: 'Billing', icon: '💳', route: '/billing' },
-    { label: 'Medical Record', icon: '🩺', route: '/medicalRecord' },
-    { label: 'Logout', icon: '🚪', route: '/login' },
+    { label: 'Profile', route: '/profile' },
+    { label: 'Book',  route: '/book-appointment' },
+    { label: 'My Appointments', route: '/my-appointment' },
+    { label: 'Billing', route: '/billing' },
+    { label: 'Medical Record',  route: '/medical_record' },
+    { label: 'Logout', route: '/login' },
   ];
 
   // Sidebar state + animated values
@@ -150,7 +150,7 @@ export default function PatientDashboard() {
             </Card>
 
             <Card style={styles.colCard}>
-              <Text style={styles.cardTitle}>Latest Medical Records</Text>
+              <Text style={styles.cardTitle}>Check UPs & Examinations</Text>
               <FlatList
                 data={RECORDS}
                 keyExtractor={(i) => i.id}
